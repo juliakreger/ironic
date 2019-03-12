@@ -1292,3 +1292,11 @@ class Connection(object):
         :param names: List of names to filter by.
         :returns: A list of deploy templates.
         """
+
+    @abc.abstractmethod
+    def save_node_metrics(self, node_id, metrics):
+        """TODO"""
+
+    @abc.abstractmethod
+    def get_node_metrics(self, node_id):
+        """TODO"""

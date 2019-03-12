@@ -1994,3 +1994,19 @@ class Connection(api.Connection):
         query = (_get_deploy_template_query_with_steps()
                  .filter(models.DeployTemplate.name.in_(names)))
         return query.all()
+
+    @oslo_db_api.retry_on_deadlock
+    def save_node_metrics(self, node_id, metrics):
+        metric = models.NodeMetrics(node_id=node_id,
+                                    metrics=metrics)
+        with _session_for_write() as session:
+            session.save_or_update(metric)
+            session.flush()
+        return metric
+
+    def get_node_metrics(self, node_id):
+        query = model_query(models.NodeMetrics).filter_by(node_id=node_id)
+        try:
+            return query.one()
+        except NoResultFound:
+            raise models.NodeMetrics(node_id=node_id)

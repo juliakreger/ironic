@@ -390,6 +390,26 @@ class DeployTemplateStep(Base):
     )
 
 
+class NodeMetrics(Base):
+    """Represents a metric entry for a metal node."""
+
+    __tablename__ = 'node_metrics'
+    __table_args__ = (
+        Index('node_metrics_idx', 'node_id'),
+        table_args())
+    node_id = Column(Integer, ForeignKey('nodes.id'),
+                     primary_key=True, nullable=False)
+    metrics = Column(db_types.JsonEncodedDict)
+
+    node = orm.relationship(
+        "Node",
+        backref='metrics',
+        primaryjoin='and_(NodeMetrics.node_id == Node.id)',
+        foreign_keys=node_id
+    )
+
+
+
 def get_class(model_name):
     """Returns the model class with the specified name.
 
